@@ -1,4 +1,5 @@
 var PATH = require('path'),
+    naming = require('bem-naming'),
     create = require('.');
 
 /**
@@ -45,7 +46,6 @@ module.exports = function() {
         .opt()
             .name('block').short('b').long('block')
             .title('block name, required')
-            .req()
             .arr()
             .end()
         .opt()
@@ -93,6 +93,10 @@ module.exports = function() {
             .title('force files creation')
             .flag()
             .end()
+        .arg()
+            .name('entities').title('Entities')
+            .arr()
+            .end()
         // .opt()
         //     .name('dir').short('C').long('chdir')
         //     .title('change process working directory, cwd by default; to specify level use --level, -l option instead')
@@ -107,12 +111,14 @@ module.exports = function() {
         .act(function(opts, args) {
             var options = {};
 
-            create({
+            var entities = args.entities ? args.entities.map(naming.parse) : [{
                 block: opts.block[0],
                 elem: opts.elem && opts.elem[0],
                 modName: opts.mod && opts.mod[0],
                 modVal: opts.val && opts.val[0]
-            }, opts.level, opts.addTech, options);
+            }];
+
+            create(entities, opts.level, opts.addTech, options);
 
             console.log('opts', opts, 'args', args);
             // TODO: handle errors
