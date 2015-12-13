@@ -1,0 +1,25 @@
+{
+  "name": "bem-tools-create",
+  "version": "1.0.0",
+  "description": "bem create command",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "BEM",
+    "bem",
+    "bem-tools",
+    "bem create",
+    "create block"
+  ],
+  "author": "",
+  "license": "MPL-2.0",
+  "dependencies": {
+    "bem-config": "bem-incubator/bem-config",
+    "bem-fs-scheme": "bem-incubator/bem-fs-scheme",
+    "bem-naming": "^0.5.1",
+    "mkdirp": "^0.5.1",
+    "os-homedir": "^1.0.1"
+  }
+}
