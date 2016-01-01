@@ -1,7 +1,7 @@
 var PATH = require('path'),
     naming = require('bem-naming'),
     braceExpansion = require('brace-expansion'),
-    create = require('.');
+    create = require('./');
 
 /**
  * Search for the nearest level recursivelt from the specified
