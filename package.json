@@ -4,7 +4,7 @@
   "description": "bem create command",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "keywords": [
     "BEM",
@@ -21,6 +21,12 @@
     "bem-naming": "^0.5.1",
     "brace-expansion": "^1.1.2",
     "mkdirp": "^0.5.1",
-    "os-homedir": "^1.0.1"
+    "os-homedir": "^1.0.1",
+    "pinkie-promise": "^2.0.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5",
+    "mock-fs": "^3.7.0"
   }
 }
