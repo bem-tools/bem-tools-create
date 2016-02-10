@@ -16,8 +16,8 @@
   "author": "",
   "license": "MPL-2.0",
   "dependencies": {
-    "bem-config": "bem-incubator/bem-config#wip-new-with-rc",
-    "bem-fs-scheme": "bem-incubator/bem-fs-scheme",
+    "bem-config": "bem-contrib/bem-config#wip-new-with-rc",
+    "bem-fs-scheme": "bem-contrib/bem-fs-scheme",
     "bem-naming": "^0.5.1",
     "brace-expansion": "^1.1.2",
     "mkdirp": "^0.5.1",
