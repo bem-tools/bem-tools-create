@@ -7,7 +7,8 @@ var fs = require('fs'),
     create = require('..'),
     bemFsScheme = require('bem-fs-scheme'),
 
-    nodeModules = mockFsHelper.duplicateFSInMemory(path.resolve('node_modules'));
+    nodeModules = mockFsHelper.duplicateFSInMemory(path.resolve('node_modules')),
+    templatesDir = mockFsHelper.duplicateFSInMemory(path.resolve('lib', 'templates'));
 
 describe('bem-tools-create', function() {
 
@@ -18,20 +19,27 @@ describe('bem-tools-create', function() {
     describe('default scheme and default naming', function() {
         function createEntityHelper(entities, levels, techs, done) {
             mock({
-                node_modules: nodeModules
+                node_modules: nodeModules,
+                lib: {
+                    templates: templatesDir
+                }
             });
 
             create(entities, levels, techs)
                 .then(function() {
-                    var fileName = bemFsScheme().path(entities[0], techs[0]);
+                    entities.forEach(function(entity) {
+                        techs.forEach(function(tech) {
+                            var fileName = bemFsScheme().path(entity, tech);
 
-                    fs.exists(fileName, function(exists) {
-                        exists ? done() : done(new Error(' '));
+                            fs.existsSync(fileName) || done(new Error(fileName + ' does not exists'));
+                        });
                     });
+
+                    done();
                 }, done);
         }
 
-        it('should create a block using \'nested\' scheme and default naming', function(done) {
+        it('should create a block using `nested` scheme and default naming', function(done) {
             createEntityHelper([{ block: 'b' }], ['.'], ['css'], done);
         });
 
@@ -45,6 +53,10 @@ describe('bem-tools-create', function() {
 
         it('should create an element modifier using `nested` scheme and default naming', function(done) {
             createEntityHelper([{ block: 'b', elem: 'e', modName: 'em', modVal: 'ev' }], ['.'], ['css'], done);
+        });
+
+        it('should create a block with diffrent techs', function(done) {
+            createEntityHelper([{ block: 'b' }], ['.'], ['css', 'deps.js'], done);
         });
     });
 });
