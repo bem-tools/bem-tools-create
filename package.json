@@ -16,13 +16,14 @@
   "author": "",
   "license": "MPL-2.0",
   "dependencies": {
-    "bem-config": "bem-contrib/bem-config#wip-new-with-rc",
+    "bem-config": "bem-contrib/bem-config",
     "bem-fs-scheme": "bem-contrib/bem-fs-scheme",
     "bem-naming": "^0.5.1",
     "brace-expansion": "^1.1.2",
     "mkdirp": "^0.5.1",
     "os-homedir": "^1.0.1",
-    "pinkie-promise": "^2.0.0"
+    "pinkie-promise": "^2.0.0",
+    "uniq": "^1.0.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
