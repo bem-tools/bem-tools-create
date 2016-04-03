@@ -111,7 +111,6 @@ module.exports = function() {
         //     .end()
         .act(function(opts, args) {
             var options = {};
-
             if (args.entities) {
                 args.entities.forEach(function(file) {
                     braceExpansion(file).forEach(function(file) {
@@ -133,12 +132,17 @@ module.exports = function() {
                 return;
             }
 
+            var techs = opts.addTech || [];
+            if (opts.forceTech) {
+                options.onlyTech = opts.forceTech;
+            }
+
             create([{
                 block: opts.block[0],
                 elem: opts.elem && opts.elem[0],
                 modName: opts.mod && opts.mod[0],
                 modVal: opts.val && opts.val[0]
-            }], opts.level, opts.addTech, options);
+            }], opts.level, techs, options);
 
             // console.log('opts', opts, 'args', args);
             // TODO: handle errors
