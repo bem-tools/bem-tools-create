@@ -4,7 +4,7 @@ var PATH = require('path'),
     create = require('./');
 
 /**
- * Search for the nearest level recursivelt from the specified
+ * Search for the nearest level recursively from the specified
  * directory to the filesystem root.
  *
  * @param {String} path  Path to start search from.
@@ -137,7 +137,7 @@ module.exports = function() {
                 options.onlyTech = opts.forceTech;
             }
 
-            create([{
+            opts.block && create([{
                 block: opts.block[0],
                 elem: opts.elem && opts.elem[0],
                 modName: opts.mod && opts.mod[0],
