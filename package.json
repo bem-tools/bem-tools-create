@@ -16,7 +16,7 @@
   "author": "",
   "license": "MPL-2.0",
   "dependencies": {
-    "bem-config": "^2.0.1",
+    "bem-config": "^3.0.0",
     "bem-fs-scheme": "bem-contrib/bem-fs-scheme#26e3289ddfac29acae2b2406801eca6d7772bc78",
     "bem-naming": "^1.0.1",
     "brace-expansion": "^1.1.2",

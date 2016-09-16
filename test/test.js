@@ -7,12 +7,35 @@ const create = require('..');
 const bemFsScheme = require('bem-fs-scheme');
 
 const tmpDir = path.join(__dirname, 'tmp');
+const initialCwd = process.cwd();
 
 function createEntityHelper(entities, levels, techs, options) {
     return create(entities, levels, techs, options).then(() => {
         for (let entity of entities) {
             for (let tech of techs) {
-                var fileName = bemFsScheme().path(entity, tech);
+                const fileName = bemFsScheme().path(entity, tech);
+
+                if (!levels) {
+                    if (options && options.defaults && options.defaults.levels) {
+                        const lvls = options.defaults.levels;
+
+                        Object.keys(lvls)
+                            .filter(levelPath => {
+                                return lvls[levelPath].default;
+                            })
+                            .forEach(levelPath => {
+                                if (!fs.existsSync(path.resolve(tmpDir, levelPath, fileName))) {
+                                    throw new Error(`Error: ${fileName} was not created`);
+                                }
+                            });
+                    } else {
+                        if (!fs.existsSync(path.resolve(process.cwd(), fileName))) {
+                            throw new Error(`Error: ${fileName} was not created`);
+                        }
+                    }
+
+                    return;
+                }
 
                 if (!fs.existsSync(path.resolve(tmpDir, fileName))) {
                     throw new Error(`Error: ${fileName} was not created`);
@@ -24,7 +47,10 @@ function createEntityHelper(entities, levels, techs, options) {
 
 describe('bem-tools-create', () => {
     beforeEach(() => mkdirp.sync(tmpDir));
-    afterEach(() => rimraf.sync(tmpDir));
+    afterEach(() => {
+        rimraf.sync(tmpDir);
+        process.chdir(initialCwd);
+    });
 
     describe('default scheme and default naming', () => {
         function createDefaultEntityHelper(entities, levels, techs) {
@@ -54,31 +80,53 @@ describe('bem-tools-create', () => {
 
     describe('custom options', () => {
         describe('levels from config', () => {
-            it.skip('should create a block on default level', () => {
-                // TODO: respect folder from config (now creates on cwd)
-                var opts = {
-                    config: { levels: {} },
+            it('should create a block on default level', () => {
+                const opts = {
+                    defaults: { levels: {} },
                     fsRoot: tmpDir,
                     fsHome: tmpDir
                 };
 
-                var level = path.join(tmpDir, 'level1');
+                ['level1', 'level2'].forEach(function(lvl) {
+                    const level = path.join(tmpDir, lvl);
 
-                mkdirp.sync(level);
+                    mkdirp.sync(level);
 
-                opts.config.levels[level] = {
-                    default: true
-                };
+                    opts.defaults.levels[level] = { default: true };
+                });
 
                 return createEntityHelper([{ block: 'b' }], null, ['css'], opts);
             });
 
-            it.skip('should create a block on cwd as a fallback', () => {
-                // TODO: implement
+            it('should create a block on cwd as a fallback', () => {
+                const fakeCwd = path.join(tmpDir, 'cwd');
+                mkdirp.sync(fakeCwd);
+                process.chdir(fakeCwd);
+
+                return createEntityHelper([{ block: 'b' }], null, ['css'], {
+                    fsRoot: tmpDir,
+                    fsHome: tmpDir
+                });
             });
         });
 
         it.skip('should create a block using custom template', () => {
+            // TODO: implement
+        });
+
+        it.skip('should create blocks on custom levels', () => {
+            // TODO: implement
+        });
+
+        it.skip('should create blocks in custom techs', () => {
+            // TODO: implement
+        });
+
+        it.skip('should create blocks with custom naming', () => {
+            // TODO: implement
+        });
+
+        it.skip('should create blocks with custom scheme', () => {
             // TODO: implement
         });
     });
