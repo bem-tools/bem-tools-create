@@ -36,11 +36,11 @@ function testEntityHelper(entities, levels, techs, options, expected) {
             try {
                 actualContent = fs.readFileSync(file.name, 'utf8');
             } catch(err) {
-                throw new Error(`Error: ${file.name} was not created`);
+                throw new Error(`${file.name} was not created`);
             }
 
             if (actualContent !== file.content) {
-                throw new Error(`Error: ${file.name} content is not correct`);
+                throw new Error(`${file.name} content is not correct`);
             }
         })
     });
@@ -49,6 +49,7 @@ function testEntityHelper(entities, levels, techs, options, expected) {
 
 describe('bem-tools-create', () => {
     beforeEach(() => mkdirp.sync(tmpDir));
+
     afterEach(() => {
         rimraf.sync(tmpDir);
         process.chdir(initialCwd);
@@ -390,6 +391,36 @@ describe('bem-tools-create', () => {
                 return testEntityHelper([{ block: 'b' }], [tmpDir], ['css'], opts, [{
                     name: path.join(tmpDir, 'b', 'b.css'),
                     content: '.b { }'
+                }]);
+            });
+
+            it('should create a block using template ID', () => {
+                const opts = {
+                    defaults: {
+                        modules: {
+                            'bem-tools': {
+                                plugins: {
+                                    create: {
+                                        techsTemplates: {
+                                            'bemtree.js': 'bemhtml.js'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    fsRoot: tmpDir,
+                    fsHome: tmpDir
+                }
+
+                return testEntityHelper([{ block: 'b' }], [tmpDir], ['bemtree.js'], opts, [{
+                    name: path.join(tmpDir, 'b', 'b.bemtree.js'),
+                    content: [
+                        "block('b').content()(function() {",
+                        "    return;",
+                        "});",
+                        ""
+                    ].join(EOL)
                 }]);
             });
         });
