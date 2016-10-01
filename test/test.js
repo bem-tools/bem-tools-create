@@ -130,9 +130,6 @@ describe('bem-tools-create', () => {
 
                 ['level1', 'level2'].forEach(function(lvl) {
                     const level = path.join(tmpDir, lvl);
-
-                    mkdirp.sync(level);
-
                     opts.defaults.levels[level] = { default: true };
                 });
 
