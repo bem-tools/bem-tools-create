@@ -190,9 +190,9 @@ describe('bem-tools-create', () => {
                 ]);
             });
 
-            it.skip('should bubble to parent level when cwd is inside an entity', () => {
+            it('should bubble to parent level when cwd is inside an entity', () => {
                 const opts = {
-                    defaults: { levels: {} },
+                    defaults: { levels: {}, root: true, __source: path.join(tmpDir, '.bemrc') },
                     fsRoot: tmpDir,
                     fsHome: tmpDir
                 };
