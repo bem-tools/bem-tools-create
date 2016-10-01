@@ -1,3 +1,5 @@
+'use strict';
+
 var PATH = require('path'),
     naming = require('bem-naming'),
     braceExpansion = require('brace-expansion'),
