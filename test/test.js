@@ -195,6 +195,78 @@ describe('bem-tools-create', () => {
                     content: templates.css('b')
                 }]);
             });
+
+            describe('level config in plugin config', () => {
+                it('should respect level techs', () => {
+                    const createLevels = {};
+                    const opts = {
+                        defaults: {
+                            levels: {},
+                            modules: {
+                                'bem-tools': {
+                                    plugins: {
+                                        create: {
+                                            techs: ['common-create-tech1', 'common-create-tech2'],
+                                            levels: createLevels
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        fsRoot: tmpDir,
+                        fsHome: tmpDir
+                    };
+
+                    const level = path.join(tmpDir, 'level1');
+                    opts.defaults.levels[level] = { default: true };
+
+                    createLevels[level] = {
+                        techs: ['create-level-tech1']
+                    };
+
+                    // TODO: check that common-create-tech1 and common-create-tech2 were never created
+                    return testEntityHelper([{ block: 'b' }], null, ['tech1', 'tech2'], opts, [
+                        { name: path.join(level, 'b', 'b.tech1') },
+                        { name: path.join(level, 'b', 'b.tech2') },
+                        { name: path.join(level, 'b', 'b.create-level-tech1') }
+                    ]);
+                });
+
+                it('should respect level templates', () => {
+                    const createLevels = {};
+                    const opts = {
+                        defaults: {
+                            levels: {},
+                            modules: {
+                                'bem-tools': {
+                                    plugins: {
+                                        create: {
+                                            templates: { css: path.join(__dirname, 'tech-templates', 'css') },
+                                            levels: createLevels
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        fsRoot: tmpDir,
+                        fsHome: tmpDir
+                    };
+
+                    const level = path.join(tmpDir, 'level1');
+                    opts.defaults.levels[level] = { default: true };
+
+                    createLevels[level] = {
+                        templates: { css: path.join(__dirname, 'tech-templates', 'css2') }
+                    };
+
+                    return testEntityHelper([{ block: 'b' }], null, ['css'], opts, [
+                        {
+                            name: path.join(level, 'b', 'b.css'),
+                            content: '.b {\n}\n'
+                        },
+                    ]);
+                });
+            });
         });
 
         describe('techs', () => {
@@ -213,7 +285,7 @@ describe('bem-tools-create', () => {
                     },
                     fsRoot: tmpDir,
                     fsHome: tmpDir
-                }
+                };
 
                 return testEntityHelper([{ block: 'b' }], [tmpDir], null, opts, [
                     { name: path.join(tmpDir, 'b', 'b.tech1') },
@@ -236,7 +308,7 @@ describe('bem-tools-create', () => {
                     },
                     fsRoot: tmpDir,
                     fsHome: tmpDir
-                }
+                };
 
                 return testEntityHelper([{ block: 'b' }], [tmpDir], ['tech3', 'tech4'], opts, [
                     { name: path.join(tmpDir, 'b', 'b.tech1') },
@@ -262,7 +334,7 @@ describe('bem-tools-create', () => {
                     },
                     fsRoot: tmpDir,
                     fsHome: tmpDir
-                }
+                };
 
                 return testEntityHelper([{ block: 'b' }], [tmpDir], ['tech1', 'tech2'], opts, [
                     { name: path.join(tmpDir, 'b', 'b.tech1') },
@@ -286,7 +358,7 @@ describe('bem-tools-create', () => {
                     },
                     fsRoot: tmpDir,
                     fsHome: tmpDir
-                }
+                };
 
                 return testEntityHelper([{ block: 'b' }], [tmpDir], ['tech1', 'tech2'], opts, [
                     { name: path.join(tmpDir, 'b', 'b.only1') },
