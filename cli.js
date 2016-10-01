@@ -2,7 +2,6 @@
 
 var PATH = require('path'),
     naming = require('bem-naming'),
-    braceExpansion = require('brace-expansion'),
     create = require('./');
 
 /**
@@ -112,32 +111,16 @@ module.exports = function() {
         //     })
         //     .end()
         .act(function(opts, args) {
-            var options = {};
-            if (args.entities) {
-                args.entities.forEach(function(file) {
-                    braceExpansion(file).forEach(function(file) {
-                        var splitted = file.split('.'),
-                            entity = naming.parse(splitted.shift()),
-                            tech = splitted.join('.'),
-                            techs = [];
+            var options = {},
+                techs = opts.addTech || [];
 
-                            if (tech) {
-                                techs = [tech];
-                            } else if (opts.addTech) {
-                                techs = opts.addTech;
-                            }
-
-// console.log('entity', entity, 'splitted', splitted, 'techs', techs);
-                        create(entity, opts.level, techs, options);
-                    });
-                });
-                return;
-            }
-
-            var techs = opts.addTech || [];
             if (opts.forceTech) {
                 options.onlyTech = opts.forceTech;
             }
+
+            if (args.entities) {
+                return create(args.entities, opts.level, techs, options);
+            };
 
             opts.block && create([{
                 block: opts.block[0],
