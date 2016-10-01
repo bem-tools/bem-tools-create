@@ -1,49 +1,13 @@
 'use strict';
 
-var PATH = require('path'),
-    naming = require('bem-naming'),
-    create = require('./');
-
-/**
- * Search for the nearest level recursively from the specified
- * directory to the filesystem root.
- *
- * @param {String} path  Path to start search from.
- * @param {String[]|String|Undefined} [types]  Level type to search.
- * @param {String} [startPath]
- * @return {String}  Found level path or specified path if not found.
- */
-// function findLevel(path, types, startPath) {
-//     var createLevel = require('./level').createLevel;
-
-//     if (types && !Array.isArray(types)) types = [types];
-//     startPath = startPath || path;
-
-//     // Check for level and level type if applicable
-//     if (exports.isLevel(path) &&
-//         (!types || exports.containsAll(createLevel(path).getTypes(), types))) return path;
-
-//     // Check for fs root
-//     if (PATH.isRoot(path)) return startPath;
-
-//     return findLevel(PATH.dirname(path), types, startPath);
-// };
+var create = require('./');
 
 module.exports = function() {
-    // var def = findLevel(process.cwd()),
-    var def = process.cwd(),
-        rel = PATH.relative(process.cwd(), def);
-
     this
         .title('Create BEM entity').helpful()
         .opt()
             .name('level').short('l').long('level')
-            .def(def)
-            .title(['level directory path, default: ',
-                !rel? '.' : rel, PATH.dirSep].join(''))
-            // .val(function(l) {
-            //     return typeof l === 'string'? require('./level').createLevel(l) : l;
-            // })
+            .title('level directory path')
             .end()
         .opt()
             .name('block').short('b').long('block')
@@ -99,17 +63,6 @@ module.exports = function() {
             .name('entities').title('Entities')
             .arr()
             .end()
-        // .opt()
-        //     .name('dir').short('C').long('chdir')
-        //     .title('change process working directory, cwd by default; to specify level use --level, -l option instead')
-        //     .def(process.cwd())
-        //     .val(function(d) {
-        //         return PATH.join(PATH.resolve(d), PATH.dirSep);
-        //     })
-        //     .act(function(opts) {
-        //         process.chdir(opts.dir);
-        //     })
-        //     .end()
         .act(function(opts, args) {
             var options = {},
                 techs = opts.addTech || [];
@@ -128,9 +81,6 @@ module.exports = function() {
                 modName: opts.mod && opts.mod[0],
                 modVal: opts.val && opts.val[0]
             }], opts.level, techs, options);
-
-            // console.log('opts', opts, 'args', args);
-            // TODO: handle errors
         })
         .end();
 };
