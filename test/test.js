@@ -272,7 +272,7 @@ describe('bem-tools-create', () => {
 
             it('should create block only in provided techs', () => {
                 const opts = {
-                    onlyTech: true,
+                    onlyTech: ['only1', 'only2'],
                     defaults: {
                         modules: {
                             'bem-tools': {
@@ -288,7 +288,7 @@ describe('bem-tools-create', () => {
                     fsHome: tmpDir
                 }
 
-                return testEntityHelper([{ block: 'b' }], [tmpDir], ['only1', 'only2'], opts, [
+                return testEntityHelper([{ block: 'b' }], [tmpDir], ['tech1', 'tech2'], opts, [
                     { name: path.join(tmpDir, 'b', 'b.only1') },
                     { name: path.join(tmpDir, 'b', 'b.only2') }
                 ]);
@@ -298,7 +298,6 @@ describe('bem-tools-create', () => {
         describe('template', () => {
             it('should create a block using templates from config', () => {
                 const opts = {
-                    onlyTech: true,
                     defaults: {
                         modules: {
                             'bem-tools': {
