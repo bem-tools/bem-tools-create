@@ -25,7 +25,7 @@ const templates = {
     }
 }
 
-function testEntityHelper(entities, levels, techs, options, expected) {
+function testEntityHelper(entities, levels, techs, options, expected, unexpected = []) {
     return create(entities, levels, techs, options).then(() => {
         expected.forEach(file => {
             let actualContent;
@@ -42,7 +42,18 @@ function testEntityHelper(entities, levels, techs, options, expected) {
             if (actualContent !== file.content) {
                 throw new Error(`${file.name} content is not correct`);
             }
-        })
+        });
+
+        unexpected.forEach(file => {
+            let content;
+            try {
+                content = fs.readFileSync(file.name, 'utf8');
+            } catch(err) {}
+
+            if (typeof content !== 'undefined') {
+                throw new Error(`${file.name} should not be created but it was`);
+            }
+        });
     });
 
 }
@@ -122,7 +133,7 @@ describe('bem-tools-create', () => {
         });
 
         describe('levels', () => {
-            it('should create a block on levels from config', () => {
+            it('should create a block on default levels from config', () => {
                 const opts = {
                     defaults: { levels: {} },
                     fsRoot: tmpDir,
@@ -142,7 +153,7 @@ describe('bem-tools-create', () => {
                     {
                         name: path.join(tmpDir, 'level2', 'b', 'b.css'),
                         content: templates.css('b')
-                    },
+                    }
                 ]);
             });
 
@@ -177,6 +188,82 @@ describe('bem-tools-create', () => {
                         content: templates.css(entity)
                     },
                 ]);
+            });
+
+            it.skip('should bubble to parent level when cwd is inside an entity', () => {
+                const opts = {
+                    defaults: { levels: {} },
+                    fsRoot: tmpDir,
+                    fsHome: tmpDir
+                };
+
+                ['level1', 'level2'].forEach(function(lvl) {
+                    const level = path.join(tmpDir, lvl);
+                    opts.defaults.levels[level] = { default: lvl === 'level2' };
+                });
+
+                const fakeCwd = path.join(tmpDir, 'level1', 'b1', '__e1');
+                mkdirp.sync(fakeCwd);
+                process.chdir(fakeCwd);
+
+                return testEntityHelper([{ block: 'b' }], null, ['css'], opts, [
+                    {
+                        name: path.join(tmpDir, 'level1', 'b', 'b.css'),
+                        content: templates.css('b')
+                    }
+                ], [{ name: path.join(tmpDir, 'level2', 'b', 'b.css') }]);
+            });
+
+            it('should create an entity on default level when cwd is not inside a level folder', () => {
+                const opts = {
+                    defaults: { levels: {} },
+                    fsRoot: tmpDir,
+                    fsHome: tmpDir
+                };
+
+                ['level1', 'level2'].forEach(function(lvl) {
+                    const level = path.join(tmpDir, lvl);
+                    opts.defaults.levels[level] = { default: true };
+                });
+
+                const fakeCwd = path.join(tmpDir, 'some-folder', 'cwd');
+                mkdirp.sync(fakeCwd);
+                process.chdir(fakeCwd);
+
+                return testEntityHelper([{ block: 'b' }], null, ['css'], opts, [
+                    {
+                        name: path.join(tmpDir, 'level1', 'b', 'b.css'),
+                        content: templates.css('b')
+                    },
+                    {
+                        name: path.join(tmpDir, 'level2', 'b', 'b.css'),
+                        content: templates.css('b')
+                    }
+                ]);
+            });
+
+            it('should create an entity on provided not default level when cwd is not inside a level folder', () => {
+                const opts = {
+                    defaults: { levels: {}, root: true, __source: path.join(tmpDir, '.bemrc') },
+                    fsRoot: tmpDir,
+                    fsHome: tmpDir
+                };
+
+                ['level1', 'level2'].forEach(function(lvl) {
+                    const level = path.join(tmpDir, lvl);
+                    opts.defaults.levels[level] = { default: lvl === 'level1' };
+                });
+
+                const fakeCwd = path.join(tmpDir, 'some-folder', 'cwd');
+                mkdirp.sync(fakeCwd);
+                process.chdir(fakeCwd);
+
+                return testEntityHelper([{ block: 'b' }], 'level2', ['css'], opts, [
+                    {
+                        name: path.join(tmpDir, 'level2', 'b', 'b.css'),
+                        content: templates.css('b')
+                    }
+                ], [{ name: path.join(tmpDir, 'level1', 'b', 'b.css') }]);
             });
 
             it('should create a block on cwd as a fallback', () => {
@@ -225,11 +312,13 @@ describe('bem-tools-create', () => {
                         techs: ['create-level-tech1']
                     };
 
-                    // TODO: check that common-create-tech1 and common-create-tech2 were never created
                     return testEntityHelper([{ block: 'b' }], null, ['tech1', 'tech2'], opts, [
                         { name: path.join(level, 'b', 'b.tech1') },
                         { name: path.join(level, 'b', 'b.tech2') },
                         { name: path.join(level, 'b', 'b.create-level-tech1') }
+                    ], [
+                        { name: path.join(level, 'b', 'b.common-create-tech1') },
+                        { name: path.join(level, 'b', 'b.common-create-tech2') }
                     ]);
                 });
 
