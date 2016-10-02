@@ -26,9 +26,15 @@ const templates = {
 }
 
 function testEntityHelper(entities, levels, techs, options, expected, unexpected = []) {
-    return create(entities, levels, techs, options).then(() => {
+    return create(entities, levels, techs, options).then(created => {
         expected.forEach(file => {
             let actualContent;
+            const createdIndex = created.indexOf(file.name);
+
+            if (createdIndex === -1) {
+                throw new Error(`There is no ${file.name} in result returned`);
+            }
+
             if (typeof file.content === 'undefined') {
                 file.content = '';
             }
@@ -42,7 +48,13 @@ function testEntityHelper(entities, levels, techs, options, expected, unexpected
             if (actualContent !== file.content) {
                 throw new Error(`${file.name} content is not correct`);
             }
+
+            created.splice(createdIndex, 1);
         });
+
+        if (created.length !== 0) {
+            throw new Error(`Result is larger than expected: ${created}`);
+        }
 
         unexpected.forEach(file => {
             let content;
