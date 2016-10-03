@@ -2,6 +2,8 @@
 
 var create = require('./');
 
+function noOp() {};
+
 module.exports = function() {
     this
         .title('Create BEM entity').helpful()
@@ -72,7 +74,7 @@ module.exports = function() {
             }
 
             if (args.entities) {
-                return create(args.entities, opts.level, techs, options);
+                return create(args.entities, opts.level, techs, options).then(noOp);
             };
 
             opts.block && create([{
@@ -80,7 +82,7 @@ module.exports = function() {
                 elem: opts.elem && opts.elem[0],
                 modName: opts.mod && opts.mod[0],
                 modVal: opts.val && opts.val[0]
-            }], opts.level, techs, options);
+            }], opts.level, techs, options).then(noOp);
         })
         .end();
 };
