@@ -25,7 +25,7 @@ const templates = {
     }
 }
 
-function testEntityHelper(entities, levels, techs, options, expected, unexpected = []) {
+function testEntityHelper(entities, levels, techs, options, expected) {
     return create(entities, levels, techs, options).then(created => {
         expected.forEach(file => {
             let actualContent;
@@ -53,19 +53,8 @@ function testEntityHelper(entities, levels, techs, options, expected, unexpected
         });
 
         if (created.length !== 0) {
-            throw new Error(`Result is larger than expected: ${created}`);
+            throw new Error(`${created} should not be created but it was`);
         }
-
-        unexpected.forEach(file => {
-            let content;
-            try {
-                content = fs.readFileSync(file.name, 'utf8');
-            } catch(err) {}
-
-            if (typeof content !== 'undefined') {
-                throw new Error(`${file.name} should not be created but it was`);
-            }
-        });
     });
 
 }
@@ -223,7 +212,7 @@ describe('bem-tools-create', () => {
                         name: path.join(tmpDir, 'level1', 'b', 'b.css'),
                         content: templates.css('b')
                     }
-                ], [{ name: path.join(tmpDir, 'level2', 'b', 'b.css') }]);
+                ]);
             });
 
             it('should create an entity on default level when cwd is not inside a level folder', () => {
@@ -275,7 +264,7 @@ describe('bem-tools-create', () => {
                         name: path.join(tmpDir, 'level2', 'b', 'b.css'),
                         content: templates.css('b')
                     }
-                ], [{ name: path.join(tmpDir, 'level1', 'b', 'b.css') }]);
+                ]);
             });
 
             it('should create a block on cwd as a fallback', () => {
@@ -328,9 +317,6 @@ describe('bem-tools-create', () => {
                         { name: path.join(level, 'b', 'b.tech1') },
                         { name: path.join(level, 'b', 'b.tech2') },
                         { name: path.join(level, 'b', 'b.create-level-tech1') }
-                    ], [
-                        { name: path.join(level, 'b', 'b.common-create-tech1') },
-                        { name: path.join(level, 'b', 'b.common-create-tech2') }
                     ]);
                 });
 
@@ -525,5 +511,145 @@ describe('bem-tools-create', () => {
                 }]);
             });
         });
+    });
+
+    describe('string parsing', () => {
+        describe('entity parsing', () => {
+            it('should parse block from string with techs from args', () => {
+                return testEntityHelper('b1', tmpDir, ['t1', 't2'], {}, [
+                    { name: path.join(tmpDir, 'b1', 'b1.t1') },
+                    { name: path.join(tmpDir, 'b1', 'b1.t2') }
+                ]);
+            });
+
+            it('should parse block from string with techs from config', () => {
+                const opts = {
+                    defaults: {
+                        modules: {
+                            'bem-tools': {
+                                plugins: {
+                                    create: {
+                                        techs: ['tech1', 'tech2']
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    fsRoot: tmpDir,
+                    fsHome: tmpDir
+                };
+
+                return testEntityHelper('b1', tmpDir, null, opts, [
+                    { name: path.join(tmpDir, 'b1', 'b1.tech1') },
+                    { name: path.join(tmpDir, 'b1', 'b1.tech2') }
+                ]);
+            });
+
+            it('should parse block with a tech from a string and ignore techs from config', () => {
+                const opts = {
+                    defaults: {
+                        modules: {
+                            'bem-tools': {
+                                plugins: {
+                                    create: {
+                                        techs: ['tech1', 'tech2']
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    fsRoot: tmpDir,
+                    fsHome: tmpDir
+                };
+
+                return testEntityHelper('b1.css', tmpDir, ['argTech'], opts, [
+                    {
+                        name: path.join(tmpDir, 'b1', 'b1.css'),
+                        content: templates.css('b1')
+                    },
+                    { name: path.join(tmpDir, 'b1', 'b1.argTech') }
+                ]);
+            });
+
+            it('should parse elem from string', () => {
+                return testEntityHelper('b1__e1', tmpDir, ['t1'], {}, [
+                    { name: path.join(tmpDir, 'b1', '__e1', 'b1__e1.t1') }
+                ]);
+            });
+
+            it('should parse block mod from string', () => {
+                return testEntityHelper('b1_m1', tmpDir, ['t1'], {}, [
+                    { name: path.join(tmpDir, 'b1', '_m1', 'b1_m1.t1') }
+                ]);
+            });
+
+            it('should parse block modVal from string', () => {
+                return testEntityHelper('b1_m1_v1', tmpDir, ['t1'], {}, [
+                    { name: path.join(tmpDir, 'b1', '_m1', 'b1_m1_v1.t1') }
+                ]);
+            });
+
+            it('should parse elem mod from string', () => {
+                return testEntityHelper('b1__e1_m1_v1', tmpDir, ['t1'], {}, [
+                    { name: path.join(tmpDir, 'b1', '__e1', '_m1', 'b1__e1_m1_v1.t1') }
+                ]);
+            });
+        })
+
+        describe('levels from string', () => {
+            it('should get level from string', () => {
+                return testEntityHelper(tmpDir + '/level1/b1.t1', null, null, {}, [
+                    { name: path.join(tmpDir, 'level1', 'b1', 'b1.t1') }
+                ]);
+            });
+
+            it('should resolve level from string by config', () => {
+                const opts = {
+                    defaults: { levels: {}, root: true, __source: path.join(tmpDir, '.bemrc') },
+                    fsRoot: tmpDir,
+                    fsHome: tmpDir
+                };
+
+                ['level1', 'level2'].forEach(function(lvl) {
+                    const level = path.join(tmpDir, lvl);
+                    opts.defaults.levels[level] = { default: lvl === 'level1' };
+                });
+
+                const fakeCwd = path.join(tmpDir, 'some-folder', 'cwd');
+                mkdirp.sync(fakeCwd);
+                process.chdir(fakeCwd);
+
+                return testEntityHelper(tmpDir + '/level1/b1.t1', null, null, opts, [
+                    {
+                        name: path.join(tmpDir, 'level1', 'b1', 'b1.t1')
+                    }
+                ]);
+            });
+        });
+
+        it('should expand braces', () => {
+            return testEntityHelper('{b1,b2}.{t1,t2}', tmpDir, null, {}, [
+                { name: path.join(tmpDir, 'b1', 'b1.t1') },
+                { name: path.join(tmpDir, 'b1', 'b1.t2') },
+                { name: path.join(tmpDir, 'b2', 'b2.t1') },
+                { name: path.join(tmpDir, 'b2', 'b2.t2') }
+            ]);
+        });
+    });
+
+    describe('respect context', () => {
+        it.skip('should get block from context', () => {
+
+        });
+
+        it.skip('should get block and elem from context', () => {
+
+        });
+
+        it.skip('should get modName from context', () => {
+
+        });
+
+        // modVal if cwd is inside mod
     });
 });
