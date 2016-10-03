@@ -20,7 +20,6 @@
     "bem-fs-scheme": "^1.0.0",
     "bem-naming": "^1.0.1",
     "brace-expansion": "^1.1.6",
-    "flatten": "^1.0.2",
     "mkdirp": "^0.5.1",
     "pinkie-promise": "^2.0.1",
     "uniq": "^1.0.1"
