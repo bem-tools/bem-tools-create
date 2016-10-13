@@ -278,7 +278,40 @@ create(
 Используйте [bem-config](https://ru.bem.info/toolbox/sdk/bem-config/) для настройки
 `bem-tools-create`.
 
-### Пример файла конфигурации
+### Минимальный пример файла конфигурации проекта
+```js
+module.exports = {
+    root: true,
+
+    levels: {
+        blocks: {},
+        bundles: {},
+    },
+
+    modules: {
+        'bem-tools': {
+            plugins: {
+                create: {
+                    // Настройки уровней, которые используются только
+                    // в `bem-tools-create`
+                    levels: {
+                        blocks: {
+                            // Уровень по умолчанию, создаём сущности тут,
+                            // если уровень не задан
+                            default: true,
+
+                            // Технологии по умолчанию для создания блоков на уровне
+                            techs: ['css', 'js'],
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+### Расширенный пример файла конфигурации
 
 ```js
 module.exports = {
