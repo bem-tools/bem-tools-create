@@ -133,6 +133,10 @@ describe('bem-tools-create', () => {
             }]);
         });
 
+        it.skip('should respect cwd via opts', () => {
+
+        });
+
         describe('levels', () => {
             it('should create a block on default levels from config', () => {
                 const opts = {
@@ -603,6 +607,15 @@ describe('bem-tools-create', () => {
                 ]);
             });
 
+            // TODO
+            it.skip('should get level from relative string', () => {
+                // chdir tmpDir/level2
+
+                return testEntityHelper(tmpDir + '../level1/b1.t1', null, null, {}, [
+                    { name: path.join(tmpDir, 'level1', 'b1', 'b1.t1') }
+                ]);
+            });
+
             it('should resolve level from string by config', () => {
                 const opts = {
                     defaults: { levels: {}, root: true, __source: path.join(tmpDir, '.bemrc') },
@@ -638,9 +651,29 @@ describe('bem-tools-create', () => {
     });
 
     describe('respect context', () => {
-        it.skip('should get block from context', () => {
+        it.only('should get block from context', () => {
+            const opts = {
+                defaults: { levels: {}, root: true, __source: path.join(tmpDir, '.bemrc') },
+                fsRoot: tmpDir,
+                fsHome: tmpDir
+            };
 
+            ['level1', 'level2'].forEach(function(lvl) {
+                const level = path.join(tmpDir, lvl);
+                opts.defaults.levels[level] = { default: lvl === 'level2' };
+            });
+
+            const fakeCwd = path.join(tmpDir, 'level1', 'b1', '__e1');
+            mkdirp.sync(fakeCwd);
+            process.chdir(fakeCwd);
+
+            return testEntityHelper('__e2.t1', null, null, opts, [
+                { name: path.join(tmpDir, 'b1', '__e2', 'b1__e2.t1') }
+            ]);
         });
+
+        // TODO
+        // return testEntityHelper('../b2/__e2.t1'
 
         it.skip('should get block and elem from context', () => {
 
