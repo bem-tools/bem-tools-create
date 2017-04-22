@@ -368,10 +368,10 @@ module.exports = {
                     // для всех уровней, у которых нет своего определения технологий
                     techs: ['css', 'js'],
 
-                    templateFolder: '/Users/user/config/bem/templates',
+                    templateFolder: '.bem/templates',
 
                     templates: {
-                        'js-ymodules': '/Users/user/config/bem/templates/js'
+                        'js-ymodules': '.bem/templates/js'
                     },
 
                     // маппинг технологий, если нужно использовать один шаблон для
@@ -618,10 +618,10 @@ module.exports = {
         'bem-tools': {
             plugins: {
                 create: {
-                    templateFolder: '/Users/user/config/bem/templates',
+                    templateFolder: '.bem/templates',
 
                     templates: {
-                        'js-ymodules': '/Users/user/config/bem/templates/js'
+                        'js-ymodules': '.bem/templates/js'
                     },
 
                     // маппинг технологий, если нужно использовать один шаблон для

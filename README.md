@@ -8,7 +8,7 @@
 
 ## Usage
 
-For each BEM-instance only configured tech is created. Configuration could be done via config file (list of default techs), command line arguments or API. 
+For each BEM-instance only configured tech is created. Configuration could be done via config file (list of default techs), command line arguments or API.
 
 If none tech configured **no files will be created**.
 
@@ -208,12 +208,10 @@ Use [bem-config](https://github.com/bem-sdk/bem-config/) to set up `bem-tools-cr
     "root": true,
     "levels": {
         "level1": {
-            "scheme": "nested",
-            "default": true
+            "scheme": "nested"
         },
         "level2": {
-            "scheme": "nested",
-            "default": true
+            "scheme": "nested"
         },
         "path/to/level3": {
             "scheme": "nested"
@@ -226,15 +224,18 @@ Use [bem-config](https://github.com/bem-sdk/bem-config/) to set up `bem-tools-cr
                     "techs": [
                         "css", "js"
                     ],
-                    "templateFolder": "/Users/tadatuta/projects/bem/bem-tools-create/lib/templates",
+                    "templateFolder": ".bem/bem-tools-create/lib/templates",
                     "templates": {
-                        "js-ymodules": "/Users/tadatuta/projects/bem/bem-tools-create/lib/templates/js"
+                        "js-ymodules": ".bem/bem-tools-create/lib/templates/js"
                     },
                     "techsTemplates": {
                         "js": "js-ymodules",
                         "bemtree.js": "bemhtml.js"
                     },
                     "levels": {
+                        "path/to/level1": {
+                            "default": true
+                        },
                         "path/to/level3": {
                             "techs": ["bemhtml.js"]
                         }
