@@ -23,6 +23,7 @@
     "@bem/sdk.entity-name": "^0.2.10",
     "@bem/sdk.naming.entity": "^0.2.10",
     "@bem/sdk.naming.entity.stringify": "^1.1.1",
+    "@bem/sdk.naming.presets": "^0.2.2",
     "brace-expansion": "^1.1.6",
     "mkdirp": "^0.5.1",
     "uniq": "^1.0.1"
