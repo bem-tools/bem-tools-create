@@ -25,7 +25,6 @@
     "@bem/sdk.naming.entity.stringify": "^1.1.1",
     "brace-expansion": "^1.1.6",
     "mkdirp": "^0.5.1",
-    "pinkie-promise": "^2.0.1",
     "uniq": "^1.0.1"
   },
   "devDependencies": {
