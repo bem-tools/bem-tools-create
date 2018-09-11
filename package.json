@@ -17,10 +17,10 @@
   "author": "",
   "license": "MPL-2.0",
   "dependencies": {
-    "@bem/fs-scheme": "^2.2.0",
     "@bem/sdk.cell": "^0.2.8",
     "@bem/sdk.config": "0.0.10",
     "@bem/sdk.entity-name": "^0.2.10",
+    "@bem/sdk.naming.cell.stringify": "0.0.11",
     "@bem/sdk.naming.entity": "^0.2.10",
     "@bem/sdk.naming.entity.stringify": "^1.1.1",
     "@bem/sdk.naming.presets": "^0.2.2",
