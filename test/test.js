@@ -131,7 +131,7 @@ describe('bem-tools-create', () => {
         it('should create blocks with scheme from config', () => {
             const entity = { block: 'b', elem: 'e1', mod: { name: 'm1', val: 'v1' } };
 
-            return testEntityHelper([entity], [tmpDir], ['css'], { defaults: { scheme: 'flat' } }, [{
+            return testEntityHelper([entity], [tmpDir], ['css'], { defaults: { naming: { fs: { scheme: 'flat' } } } }, [{
                 name: path.join(tmpDir, 'b__e1_m1_v1.css'),
                 content: templates.css(entity)
             }]);
@@ -180,7 +180,11 @@ describe('bem-tools-create', () => {
                             },
                             {
                                 path: levels[1],
-                                scheme: 'flat'
+                                naming: {
+                                    fs: {
+                                        scheme: 'flat'
+                                    }
+                                }
                             }
                         ]
                     }
