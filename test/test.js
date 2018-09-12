@@ -65,8 +65,8 @@ describe('bem-tools-create', () => {
     beforeEach(() => mkdirp.sync(tmpDir));
 
     afterEach(() => {
-        rimraf.sync(tmpDir);
         process.chdir(initialCwd);
+        rimraf.sync(tmpDir);
     });
 
     describe('default scheme and default naming', () => {
